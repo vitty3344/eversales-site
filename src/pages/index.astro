@@ -1,0 +1,246 @@
+---
+// src/pages/index.astro
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Eversales | The Growth Ecosystem</title>
+    
+    <style>
+      /* 1. Base Entry Animation */
+      @keyframes floatUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-entry {
+        animation: floatUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        opacity: 0;
+      }
+      .delay-1 { animation-delay: 0.1s; }
+      .delay-2 { animation-delay: 0.2s; }
+      .delay-3 { animation-delay: 0.3s; }
+
+      /* 2. Custom Pulse for the Explore Button */
+      @keyframes buttonPulse {
+        0% { box-shadow: 0 0 0 0 rgba(15, 23, 42, 0.3); transform: scale(1); }
+        50% { box-shadow: 0 0 0 10px rgba(15, 23, 42, 0); transform: scale(1.03); }
+        100% { box-shadow: 0 0 0 0 rgba(15, 23, 42, 0); transform: scale(1); }
+      }
+      .btn-pulse {
+        animation: buttonPulse 3s infinite;
+      }
+
+      /* 3. Card Container */
+      .card-container {
+        position: relative;
+        width: 100%;
+        height: 280px; 
+      }
+      
+      @media (max-width: 768px) {
+        .card-container {
+          height: auto;
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+      }
+
+      .card {
+        background-color: rgba(255, 255, 255, 0.7);
+        border: 1px solid #e2e8f0;
+        border-radius: 1rem;
+        padding: 2rem;
+        width: 100%;
+        transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+      }
+
+      @media (min-width: 768px) {
+        .card {
+          position: absolute;
+          width: 31%; 
+          top: 0;
+          opacity: 0; 
+          transform: scale(0.9) translateX(-50%);
+          left: 50%; 
+          pointer-events: none; 
+        }
+        
+        .card.is-center {
+          left: 50%;
+          transform: translateX(-50%) scale(1);
+          opacity: 1;
+          z-index: 30;
+          pointer-events: auto;
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .card.is-left {
+          left: 0;
+          transform: translateX(0) scale(0.95);
+          opacity: 1;
+          z-index: 10;
+          pointer-events: auto;
+        }
+
+        .card.is-right {
+          left: auto; 
+          right: 0;   
+          transform: translateX(0) scale(0.95);
+          opacity: 1;
+          z-index: 10;
+          pointer-events: auto;
+        }
+      }
+
+      .card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(37, 99, 235, 0.1), transparent 40%);
+        opacity: 0;
+        transition: opacity 0.5s;
+        pointer-events: none;
+        z-index: 1;
+      }
+      .card-container:hover .card::before { opacity: 1; }
+      .card-content { position: relative; z-index: 2; height: 100%; }
+    </style>
+  </head>
+  
+  <body class="bg-slate-50 text-slate-900 flex flex-col items-center justify-center min-h-screen font-sans selection:bg-blue-100 overflow-x-hidden">
+
+    <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[900px] h-[600px] bg-blue-400/10 blur-[120px] rounded-full pointer-events-none -z-10"></div>
+
+    <div class="w-full max-w-6xl px-6 flex flex-col items-center z-10 py-10 md:py-16">
+      
+      <div class="mb-8 animate-entry">
+        <img src="/logo.svg" alt="Eversales Logo" class="w-64 md:w-96 h-auto mx-auto drop-shadow-sm" />
+      </div>
+      
+      <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 text-center text-slate-900 animate-entry delay-1 leading-tight">
+        The Complete Ecosystem for <br />
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-blue-500">
+          SMB Revenue Growth.
+        </span>
+      </h1>
+
+      <div class="animate-entry delay-1 mb-16">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 border border-slate-200 rounded-full bg-white/50 backdrop-blur-sm shadow-sm">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+          </span>
+          <span class="text-xs font-bold text-slate-500 tracking-wide uppercase">
+            Full Website Coming Soon
+          </span>
+        </div>
+      </div>
+
+      <div id="card-container" class="card-container w-full animate-entry delay-2">
+        
+        <div id="card-build" class="card is-center">
+          <div class="card-content flex flex-col h-full">
+            <div class="w-12 h-12 bg-white border border-slate-100 rounded-xl flex items-center justify-center mb-6 shadow-sm group-hover:border-blue-200">
+              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-slate-900 mb-3">Custom Playbooks</h3>
+            <p class="text-slate-500 leading-relaxed text-sm">
+              Stop guessing. We build a repeatable, documented sales process tailored specifically for your market and deal size.
+            </p>
+          </div>
+        </div>
+
+        <div id="card-source" class="card">
+          <div class="card-content flex flex-col h-full">
+            <div class="w-12 h-12 bg-white border border-slate-100 rounded-xl flex items-center justify-center mb-6 shadow-sm group-hover:border-blue-200">
+              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-slate-900 mb-3">Team Transformation</h3>
+            <p class="text-slate-500 leading-relaxed text-sm">
+              Move from "order takers" to "deal closers." We install the scripts, psychology, and skills needed to win consistently.
+            </p>
+          </div>
+        </div>
+
+        <div id="card-train" class="card">
+          <div class="card-content flex flex-col h-full">
+            <div class="w-12 h-12 bg-white border border-slate-100 rounded-xl flex items-center justify-center mb-6 shadow-sm group-hover:border-blue-200">
+              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-slate-900 mb-3">Sustainable Scale</h3>
+            <p class="text-slate-500 leading-relaxed text-sm">
+              End the "feast or famine" cycle. We implement the KPIs and management habits that ensure revenue keeps climbing.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="hidden md:block mt-4 animate-entry delay-2 h-16">
+        <button id="next-btn" class="group btn-pulse relative inline-flex items-center justify-center px-8 py-3 text-base font-bold text-white transition-all duration-300 bg-slate-900 rounded-full hover:bg-blue-600 hover:scale-105 shadow-lg shadow-slate-900/20">
+          <span id="btn-text">Explore: Team Transformation</span>
+          <svg class="w-5 h-5 ml-2 -mr-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+        </button>
+      </div>
+      
+      <div class="mt-16 animate-entry delay-3 text-center">
+        <p class="text-slate-400 font-medium mb-3">If you have questions, don't hesitate to</p>
+        <a href="mailto:hello@eversales.net" class="inline-flex items-center text-slate-900 font-bold hover:text-blue-600 transition-colors border-b-2 border-slate-200 hover:border-blue-600 pb-1">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+          Contact Us
+        </a>
+      </div>
+
+    </div>
+
+    <script>
+      // 1. Mouse Spotlight Logic
+      const wrapper = document.getElementById("card-container");
+      wrapper.onmousemove = e => {
+        for(const card of document.getElementsByClassName("card")) {
+          const rect = card.getBoundingClientRect(),
+                x = e.clientX - rect.left,
+                y = e.clientY - rect.top;
+          card.style.setProperty("--mouse-x", `${x}px`);
+          card.style.setProperty("--mouse-y", `${y}px`);
+        };
+      }
+
+      // 2. The 3-Step Card Animation Logic
+      const btn = document.getElementById('next-btn');
+      const btnText = document.getElementById('btn-text');
+      
+      const cardBuild = document.getElementById('card-build');
+      const cardSource = document.getElementById('card-source');
+      const cardTrain = document.getElementById('card-train');
+
+      let step = 0;
+
+      btn.addEventListener('click', () => {
+        if (step === 0) {
+          cardBuild.classList.remove('is-center');
+          cardBuild.classList.add('is-left');
+          cardSource.classList.add('is-center'); 
+          btnText.innerText = "Explore: Sustainable Scale";
+          step++;
+        } else if (step === 1) {
+          cardTrain.classList.add('is-right');
+          btn.style.opacity = '0';
+          btn.style.pointerEvents = 'none';
+          step++;
+        }
+      });
+    </script>
+  </body>
+</html>
