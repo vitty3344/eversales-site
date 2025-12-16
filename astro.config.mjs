@@ -3,17 +3,18 @@ import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 import react from '@astrojs/react';
 import keystatic from '@keystatic/astro';
-import vercel from '@astrojs/vercel/serverless'; // Ensure this is imported
+import vercel from '@astrojs/vercel/serverless'; // <--- Make sure this import is here
 
 export default defineConfig({
-  // Change 'static' to 'hybrid' so the Admin Portal can run dynamic code
-  output: 'hybrid', 
-  
-  adapter: vercel(), // This tells Vercel how to run the dynamic parts
+  // 1. Change output to 'hybrid' (allows mixing static pages + dynamic admin)
+  output: 'hybrid',
+
+  // 2. Add the Vercel adapter
+  adapter: vercel(),
 
   integrations: [
     tailwind(), 
-    react(),
+    react(), 
     keystatic()
   ],
 });
