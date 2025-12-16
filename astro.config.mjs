@@ -3,13 +3,12 @@ import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 import react from '@astrojs/react';
 import keystatic from '@keystatic/astro';
-import vercel from '@astrojs/vercel/serverless'; // <--- Make sure this import is here
+import vercel from '@astrojs/vercel'; // <--- UPDATED: Removed '/serverless'
 
 export default defineConfig({
-  // 1. Change output to 'hybrid' (allows mixing static pages + dynamic admin)
-  output: 'hybrid',
+  // UPDATED: Changed back to 'static' (as per Astro 5.0 requirements)
+  output: 'static', 
 
-  // 2. Add the Vercel adapter
   adapter: vercel(),
 
   integrations: [
