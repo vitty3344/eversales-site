@@ -3,7 +3,10 @@ import { config, fields, collection } from '@keystatic/core';
 
 export default config({
   storage: {
-    kind: 'local', // We start with 'local' mode for development
+    kind: 'cloud', // We start with 'local' mode for development
+  },
+    cloud: {
+    project: 'eversales/eversales-site',
   },
   collections: {
     events: collection({
