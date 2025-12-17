@@ -1,0 +1,32 @@
+---
+// src/layouts/Layout.astro
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css'; // Ensure you have basic Tailwind setup
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "The Growth Ecosystem for SMBs." } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <title>{title} | Eversales</title>
+  </head>
+  <body class="bg-white text-slate-900 font-sans flex flex-col min-h-screen pt-16"> 
+    <Navbar />
+    
+    <main class="flex-grow">
+      <slot /> </main>
+
+    <Footer />
+  </body>
+</html>

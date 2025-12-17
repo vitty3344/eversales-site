@@ -1,251 +1,413 @@
 ---
 // src/pages/index.astro
-import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
 
-// Fetch all events from the DB
-const allEvents = await getCollection('events');
-console.log(allEvents); //
+// =========================================
+// PARTNER LOGO CONFIGURATION
+// =========================================
+// To add real logos:
+// 1. Upload your logo to /public/logos/ (e.g., /public/logos/google.png)
+// 2. Add an object here: { name: "Google", logo: "/logos/google.png" }
+// 3. If 'logo' is present, the SVG 'path' is ignored.
+// =========================================
+
+const partners = [
+  { 
+    name: "Apex Capital", 
+    // logo: "/logos/apex.png", // <--- UNCOMMENT THIS TO USE AN IMAGE FILE
+    path: "M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z" 
+  },
+  { 
+    name: "Global Ventures", 
+    path: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" 
+  },
+  { 
+    name: "ScaleUp Inc", 
+    path: "M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z" 
+  },
+  { 
+    name: "Foundry Group", 
+    path: "M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23 1.12 4.81z" 
+  },
+  { 
+    name: "NextLevel", 
+    path: "M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z" 
+  }
+];
+
+// Create the marquee block
+const block = [...partners, ...partners, ...partners, ...partners, ...partners, ...partners];
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>Eversales | The Growth Ecosystem</title>
-    
-    <style>
-      /* 1. Base Entry Animation */
-      @keyframes floatUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      .animate-entry {
-        animation: floatUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        opacity: 0;
-      }
-      .delay-1 { animation-delay: 0.1s; }
-      .delay-2 { animation-delay: 0.2s; }
-      .delay-3 { animation-delay: 0.3s; }
-
-      /* 2. Custom Pulse for the Explore Button */
-      @keyframes buttonPulse {
-        0% { box-shadow: 0 0 0 0 rgba(15, 23, 42, 0.3); transform: scale(1); }
-        50% { box-shadow: 0 0 0 10px rgba(15, 23, 42, 0); transform: scale(1.03); }
-        100% { box-shadow: 0 0 0 0 rgba(15, 23, 42, 0); transform: scale(1); }
-      }
-      .btn-pulse {
-        animation: buttonPulse 3s infinite;
-      }
-
-      /* 3. Card Container */
-      .card-container {
-        position: relative;
-        width: 100%;
-        height: 280px; 
-      }
-      
-      @media (max-width: 768px) {
-        .card-container {
-          height: auto;
-          display: flex;
-          flex-direction: column;
-          gap: 1.5rem;
-        }
-      }
-
-      .card {
-        background-color: rgba(255, 255, 255, 0.7);
-        border: 1px solid #e2e8f0;
-        border-radius: 1rem;
-        padding: 2rem;
-        width: 100%;
-        transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-      }
-
-      @media (min-width: 768px) {
-        .card {
-          position: absolute;
-          width: 31%; 
-          top: 0;
-          opacity: 0; 
-          transform: scale(0.9) translateX(-50%);
-          left: 50%; 
-          pointer-events: none; 
-        }
-        
-        .card.is-center {
-          left: 50%;
-          transform: translateX(-50%) scale(1);
-          opacity: 1;
-          z-index: 30;
-          pointer-events: auto;
-          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-
-        .card.is-left {
-          left: 0;
-          transform: translateX(0) scale(0.95);
-          opacity: 1;
-          z-index: 10;
-          pointer-events: auto;
-        }
-
-        .card.is-right {
-          left: auto; 
-          right: 0;   
-          transform: translateX(0) scale(0.95);
-          opacity: 1;
-          z-index: 10;
-          pointer-events: auto;
-        }
-      }
-
-      .card::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        border-radius: inherit;
-        background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(37, 99, 235, 0.1), transparent 40%);
-        opacity: 0;
-        transition: opacity 0.5s;
-        pointer-events: none;
-        z-index: 1;
-      }
-      .card-container:hover .card::before { opacity: 1; }
-      .card-content { position: relative; z-index: 2; height: 100%; }
-    </style>
-  </head>
+<Layout title="The Growth Ecosystem">
   
-  <body class="bg-slate-50 text-slate-900 flex flex-col items-center justify-center min-h-screen font-sans selection:bg-blue-100 overflow-x-hidden">
+  <style is:global>
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
 
-    <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[900px] h-[600px] bg-blue-400/10 blur-[120px] rounded-full pointer-events-none -z-10"></div>
+  <style>
+    /* 1. Entry Animations */
+    @keyframes floatUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-entry {
+      animation: floatUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 0;
+    }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
 
-    <div class="w-full max-w-6xl px-6 flex flex-col items-center z-10 py-10 md:py-16">
-      
-      <div class="mb-8 animate-entry">
-        <img src="/logo.svg" alt="Eversales Logo" class="w-64 md:w-96 h-auto mx-auto drop-shadow-sm" />
+    /* 2. SPOTLIGHT EFFECT */
+    .spotlight-item {
+      position: relative;
+      overflow: hidden;
+      --mouse-x: 50%;
+      --mouse-y: 50%;
+    }
+    .spotlight-item::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(400px circle at var(--mouse-x) var(--mouse-y), rgba(37, 99, 235, 0.08), transparent 40%);
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .spotlight-item:hover::after {
+      opacity: 1;
+    }
+
+    /* 3. INFINITE MARQUEE ANIMATION */
+    @keyframes scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); } 
+    }
+    .animate-scroll {
+      animation: scroll 80s linear infinite; 
+      width: max-content; 
+      will-change: transform; 
+    }
+  </style>
+
+  <section class="relative pt-24 pb-20 md:pt-32 md:pb-32 overflow-hidden">
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-blue-400/10 blur-[120px] rounded-full -z-10"></div>
+    
+    <div class="max-w-7xl mx-auto px-6 flex flex-col items-center text-center">
+      <div class="animate-entry inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-xs font-bold uppercase tracking-wide mb-8">
+        <span class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
+        Accepting New Partners for Q1
       </div>
-      
-      <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 text-center text-slate-900 animate-entry delay-1 leading-tight">
-        The Complete Ecosystem for <br />
-        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-blue-500">
-          SMB Revenue Growth.
-        </span>
+
+      <h1 class="animate-entry delay-1 text-5xl md:text-7xl font-extrabold text-slate-900 tracking-tight mb-8 max-w-4xl leading-tight">
+        Build a Sales Engine that <br />
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-blue-500">runs without you.</span>
       </h1>
 
-      <div class="animate-entry delay-1 mb-16">
-        <div class="inline-flex items-center gap-2 px-4 py-1.5 border border-slate-200 rounded-full bg-white/50 backdrop-blur-sm shadow-sm">
-          <span class="relative flex h-2 w-2">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-          </span>
-          <span class="text-xs font-bold text-slate-500 tracking-wide uppercase">
-            Full Website Coming Soon
-          </span>
-        </div>
-      </div>
+      <p class="animate-entry delay-2 text-lg md:text-xl text-slate-500 max-w-2xl mb-10 leading-relaxed">
+        We don't just advise. We install the infrastructure, hire the talent, and train the team to scale your revenue predictably.
+      </p>
 
-      <div id="card-container" class="card-container w-full animate-entry delay-2">
-        
-        <div id="card-build" class="card is-center">
-          <div class="card-content flex flex-col h-full">
-            <div class="w-12 h-12 bg-white border border-slate-100 rounded-xl flex items-center justify-center mb-6 shadow-sm group-hover:border-blue-200">
-              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-3">Custom Playbooks</h3>
-            <p class="text-slate-500 leading-relaxed text-sm">
-              Stop guessing. We build a repeatable, documented sales process tailored specifically for your market and deal size.
-            </p>
-          </div>
-        </div>
-
-        <div id="card-source" class="card">
-          <div class="card-content flex flex-col h-full">
-            <div class="w-12 h-12 bg-white border border-slate-100 rounded-xl flex items-center justify-center mb-6 shadow-sm group-hover:border-blue-200">
-              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"></path>
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-3">Team Transformation</h3>
-            <p class="text-slate-500 leading-relaxed text-sm">
-              Move from "order takers" to "deal closers." We install the scripts, psychology, and skills needed to win consistently.
-            </p>
-          </div>
-        </div>
-
-        <div id="card-train" class="card">
-          <div class="card-content flex flex-col h-full">
-            <div class="w-12 h-12 bg-white border border-slate-100 rounded-xl flex items-center justify-center mb-6 shadow-sm group-hover:border-blue-200">
-              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941"></path>
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-3">Sustainable Scale</h3>
-            <p class="text-slate-500 leading-relaxed text-sm">
-              End the "feast or famine" cycle. We implement the KPIs and management habits that ensure revenue keeps climbing.
-            </p>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="hidden md:block mt-4 animate-entry delay-2 h-16">
-        <button id="next-btn" class="group btn-pulse relative inline-flex items-center justify-center px-8 py-3 text-base font-bold text-white transition-all duration-300 bg-slate-900 rounded-full hover:bg-blue-600 hover:scale-105 shadow-lg shadow-slate-900/20">
-          <span id="btn-text">Explore: Team Transformation</span>
-          <svg class="w-5 h-5 ml-2 -mr-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
-        </button>
-      </div>
-      
-      <div class="mt-16 animate-entry delay-3 text-center">
-        <p class="text-slate-400 font-medium mb-3">If you have questions, don't hesitate to</p>
-        <a href="mailto:hello@eversales.net" class="inline-flex items-center text-slate-900 font-bold hover:text-blue-600 transition-colors border-b-2 border-slate-200 hover:border-blue-600 pb-1">
-          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-          Contact Us
+      <div class="animate-entry delay-3 flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+        <a href="#engine-section" class="px-8 py-4 text-base font-bold text-white bg-slate-900 rounded-full hover:bg-blue-600 transition-all shadow-xl shadow-slate-900/20 hover:scale-105">
+          See How It Works
+        </a>
+        <a href="/events" class="spotlight-item px-8 py-4 text-base font-bold text-slate-700 bg-white border border-slate-200 rounded-full hover:bg-slate-50 transition-all hover:border-blue-300">
+          <span class="relative z-20">View Live Workshops</span>
         </a>
       </div>
+    </div>
+  </section>
 
+  <section class="py-6 border-y border-slate-100 bg-white overflow-hidden">
+    <div class="max-w-7xl mx-auto px-6 text-center mb-4">
+      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Strategic Partners</p>
     </div>
 
-    <script>
-      // 1. Mouse Spotlight Logic
-      const wrapper = document.getElementById("card-container");
-      wrapper.onmousemove = e => {
-        for(const card of document.getElementsByClassName("card")) {
-          const rect = card.getBoundingClientRect(),
-                x = e.clientX - rect.left,
-                y = e.clientY - rect.top;
-          card.style.setProperty("--mouse-x", `${x}px`);
-          card.style.setProperty("--mouse-y", `${y}px`);
-        };
-      }
+    <div class="relative w-full overflow-hidden" style="mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);">
+      <div class="flex items-center animate-scroll whitespace-nowrap opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
+        
+        <div class="flex items-center gap-12 pr-12">
+          {block.map(partner => (
+            <span class="text-sm font-bold text-slate-500 flex items-center gap-2">
+              {/* LOGIC: If 'logo' exists, use IMG, else use SVG */}
+              {partner.logo ? (
+                 <img src={partner.logo} alt={partner.name} class="h-6 w-auto object-contain" />
+              ) : (
+                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d={partner.path}/></svg>
+              )}
+              {partner.name}
+            </span>
+          ))}
+        </div>
 
-      // 2. The 3-Step Card Animation Logic
-      const btn = document.getElementById('next-btn');
-      const btnText = document.getElementById('btn-text');
+        <div class="flex items-center gap-12 pr-12">
+          {block.map(partner => (
+            <span class="text-sm font-bold text-slate-500 flex items-center gap-2">
+              {partner.logo ? (
+                 <img src={partner.logo} alt={partner.name} class="h-6 w-auto object-contain" />
+              ) : (
+                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d={partner.path}/></svg>
+              )}
+              {partner.name}
+            </span>
+          ))}
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="engine-section" class="bg-white relative">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="pt-24 pb-12 md:pb-24 text-center">
+        <h2 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6">How We Build Your Engine</h2>
+        <p class="text-lg text-slate-500 max-w-2xl mx-auto">
+          A predictable system requires a predictable installation. Scroll to initialize the process.
+        </p>
+      </div>
+
+      <div class="flex flex-col md:flex-row gap-12 lg:gap-24">
+        <div class="hidden md:flex flex-col w-1/3 sticky top-32 h-fit pb-32">
+          <div class="bg-slate-900 rounded-3xl p-8 shadow-2xl text-white relative overflow-hidden min-h-[400px] flex flex-col justify-between transition-all duration-500" id="monitor-card">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-blue-600/30 blur-[80px] rounded-full -translate-y-1/2 translate-x-1/2 transition-colors duration-500" id="monitor-blob"></div>
+            <div class="relative z-10 flex items-center justify-between">
+              <span class="text-xs font-bold uppercase tracking-widest text-slate-400">System Status</span>
+              <div class="flex gap-1">
+                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                <span class="w-2 h-2 rounded-full bg-slate-700"></span>
+              </div>
+            </div>
+            <div class="relative z-10 my-auto">
+              <span id="monitor-number" class="text-[120px] leading-none font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-slate-600 transition-all duration-300 block transform translate-y-0 opacity-100">01</span>
+            </div>
+            <div class="relative z-10">
+              <h3 id="monitor-title" class="text-2xl font-bold mb-2">Diagnostic</h3>
+              <div class="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
+                <div id="monitor-progress" class="h-full bg-blue-500 w-1/4 transition-all duration-500"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="w-full md:w-2/3 flex flex-col pb-32">
+          <div class="step-trigger min-h-[70vh] flex flex-col justify-center border-l-2 border-slate-100 pl-8 md:pl-16 py-12" data-step="1">
+            <span class="text-blue-600 font-bold text-lg mb-4 md:hidden">01. Phase One</span>
+            <h3 class="text-3xl md:text-4xl font-bold text-slate-900 mb-6">The Diagnostic Audit</h3>
+            <p class="text-lg text-slate-500 leading-relaxed mb-8 max-w-lg">
+              We don't guess. We wire into your CRM and listen to your calls. We identify the exact friction points causing you to lose deals.
+            </p>
+            <ul class="space-y-4">
+              <li class="flex items-center gap-3 text-slate-700">
+                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                CRM Health Check
+              </li>
+              <li class="flex items-center gap-3 text-slate-700">
+                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                Call Recording Analysis
+              </li>
+            </ul>
+          </div>
+
+          <div class="step-trigger min-h-[70vh] flex flex-col justify-center border-l-2 border-slate-100 pl-8 md:pl-16 py-12" data-step="2">
+            <span class="text-blue-600 font-bold text-lg mb-4 md:hidden">02. Phase Two</span>
+            <h3 class="text-3xl md:text-4xl font-bold text-slate-900 mb-6">The Custom Blueprint</h3>
+            <p class="text-lg text-slate-500 leading-relaxed mb-8 max-w-lg">
+              We build the assets your team is missing. A full Sales Playbook containing word-for-word scripts and battlesheets.
+            </p>
+            <ul class="space-y-4">
+              <li class="flex items-center gap-3 text-slate-700">
+                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                Custom Script Creation
+              </li>
+              <li class="flex items-center gap-3 text-slate-700">
+                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                Email Sequence Setup
+              </li>
+            </ul>
+          </div>
+
+          <div class="step-trigger min-h-[70vh] flex flex-col justify-center border-l-2 border-slate-100 pl-8 md:pl-16 py-12" data-step="3">
+            <span class="text-blue-600 font-bold text-lg mb-4 md:hidden">03. Phase Three</span>
+            <h3 class="text-3xl md:text-4xl font-bold text-slate-900 mb-6">The Active Installation</h3>
+            <p class="text-lg text-slate-500 leading-relaxed mb-8 max-w-lg">
+              Documentation is useless if no one uses it. We run live workshops and roleplay sessions to install the new behaviors.
+            </p>
+            <ul class="space-y-4">
+              <li class="flex items-center gap-3 text-slate-700">
+                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                Live Roleplay Sessions
+              </li>
+              <li class="flex items-center gap-3 text-slate-700">
+                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                Recruiting Support
+              </li>
+            </ul>
+          </div>
+
+          <div class="step-trigger min-h-[70vh] flex flex-col justify-center border-l-2 border-slate-100 pl-8 md:pl-16 py-12" data-step="4">
+            <span class="text-blue-600 font-bold text-lg mb-4 md:hidden">04. Phase Four</span>
+            <h3 class="text-3xl md:text-4xl font-bold text-slate-900 mb-6">The System Handoff</h3>
+            <p class="text-lg text-slate-500 leading-relaxed mb-8 max-w-lg">
+              We don't leave you dependent on us. We install the management KPIs so the engine runs automatically without you.
+            </p>
+            <ul class="space-y-4">
+              <li class="flex items-center gap-3 text-slate-700">
+                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                Management Dashboards
+              </li>
+              <li class="flex items-center gap-3 text-slate-700">
+                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                Graduation & Handoff
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="solutions" class="py-24 bg-slate-50">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid md:grid-cols-2 gap-12">
+        
+        <div class="spotlight-item bg-white rounded-3xl shadow-sm border border-slate-100 hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col">
+          <div class="h-56 bg-slate-200 w-full overflow-hidden">
+             <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&q=80&w=1000" alt="Start-up Team" class="w-full h-full object-cover opacity-90 hover:scale-105 transition-transform duration-700" />
+          </div>
+          
+          <div class="p-10 flex-1 flex flex-col relative z-20">
+            <h3 class="text-2xl font-bold text-slate-900 mb-2">Start-up Accelerator</h3>
+            <p class="text-slate-500 mb-8 flex-1">For Founders who are currently the only salesperson and need to hire their first rep.</p>
+            
+            <a href="/services/accelerator" class="inline-flex w-full items-center justify-center px-6 py-3 font-bold text-slate-900 border border-slate-200 rounded-xl hover:bg-slate-900 hover:text-white transition-colors">
+              View Accelerator Program
+            </a>
+          </div>
+        </div>
+
+        <div class="spotlight-item bg-white rounded-3xl shadow-sm border border-slate-100 hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col">
+          <div class="h-56 bg-slate-200 w-full overflow-hidden">
+             <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&q=80&w=1000" alt="Corporate Meeting" class="w-full h-full object-cover opacity-90 hover:scale-105 transition-transform duration-700" />
+          </div>
+          
+          <div class="p-10 flex-1 flex flex-col relative z-20">
+            <h3 class="text-2xl font-bold text-slate-900 mb-2">Corporate Training</h3>
+            <p class="text-slate-500 mb-8 flex-1">For existing Sales Teams that are missing quota or suffering from inconsistent performance.</p>
+            
+            <a href="/services/training" class="inline-flex w-full items-center justify-center px-6 py-3 font-bold text-slate-900 border border-slate-200 rounded-xl hover:bg-slate-900 hover:text-white transition-colors">
+              View Training Options
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="py-8 bg-white">
+    <div class="max-w-[1400px] mx-auto px-3 md:px-4">
       
-      const cardBuild = document.getElementById('card-build');
-      const cardSource = document.getElementById('card-source');
-      const cardTrain = document.getElementById('card-train');
+      <div class="relative bg-slate-900 rounded-3xl overflow-hidden px-6 py-20 md:py-24 text-center shadow-2xl shadow-slate-200">
+        
+        <div class="absolute inset-0 z-0">
+          <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=2000" alt="Office Background" class="w-full h-full object-cover opacity-40 mix-blend-overlay" />
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/80 to-slate-900/40"></div>
+        </div>
+        
+        <div class="relative z-10 max-w-4xl mx-auto">
+          <h2 class="text-4xl md:text-5xl font-extrabold text-white mb-8 tracking-tight">Ready to stop guessing?</h2>
+          <p class="text-xl text-slate-300 mb-10 leading-relaxed max-w-2xl mx-auto">
+            You can keep trying to figure it out yourself, or you can let us install a proven sales engine in your business in the next 90 days.
+          </p>
+          <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <a href="/book" class="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-full transition-all hover:scale-105 shadow-lg shadow-blue-600/30">
+              Book a Diagnostic Call
+            </a>
+            <a href="/events" class="px-8 py-4 bg-transparent border border-slate-600 hover:bg-slate-800 text-white font-bold rounded-full transition-all">
+              See Upcoming Events
+            </a>
+          </div>
+        </div>
 
-      let step = 0;
+      </div>
+    </div>
+  </section>
 
-      btn.addEventListener('click', () => {
-        if (step === 0) {
-          cardBuild.classList.remove('is-center');
-          cardBuild.classList.add('is-left');
-          cardSource.classList.add('is-center'); 
-          btnText.innerText = "Explore: Sustainable Scale";
-          step++;
-        } else if (step === 1) {
-          cardTrain.classList.add('is-right');
-          btn.style.opacity = '0';
-          btn.style.pointerEvents = 'none';
-          step++;
-        }
+  <script>
+    // 1. MONITOR SCRIPT
+    function initMonitor() {
+      const triggers = document.querySelectorAll('.step-trigger');
+      const numberEl = document.getElementById('monitor-number');
+      const titleEl = document.getElementById('monitor-title');
+      const progressEl = document.getElementById('monitor-progress');
+      const blobEl = document.getElementById('monitor-blob');
+
+      if (!numberEl || !titleEl) return;
+
+      const dataMap = {
+        1: { title: "Diagnostic", progress: "0%", color: "bg-blue-600/30" },
+        2: { title: "Blueprint", progress: "33%", color: "bg-indigo-600/30" },
+        3: { title: "Installation", progress: "67%", color: "bg-purple-600/30" },
+        4: { title: "Handoff", progress: "100%", color: "bg-green-600/30" }
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const step = entry.target.getAttribute('data-step');
+            const data = dataMap[step];
+            
+            if(data) {
+              numberEl.innerText = `0${step}`;
+              titleEl.innerText = data.title;
+              if(progressEl) progressEl.style.width = data.progress;
+              if(blobEl) blobEl.className = `absolute top-0 right-0 w-64 h-64 blur-[80px] rounded-full -translate-y-1/2 translate-x-1/2 transition-colors duration-500 ${data.color}`;
+              
+              numberEl.classList.remove('opacity-100');
+              numberEl.classList.add('opacity-50', 'scale-95');
+              setTimeout(() => {
+                numberEl.classList.remove('opacity-50', 'scale-95');
+                numberEl.classList.add('opacity-100', 'scale-100');
+              }, 50);
+            }
+          }
+        });
+      }, {
+        root: null,
+        rootMargin: "-40% 0px -40% 0px",
+        threshold: 0
       });
-    </script>
-  </body>
-</html>
+
+      triggers.forEach(trigger => observer.observe(trigger));
+    }
+
+    // 2. SPOTLIGHT SCRIPT
+    function initSpotlight() {
+      const items = document.querySelectorAll('.spotlight-item');
+      items.forEach(el => {
+        el.addEventListener('mousemove', (e) => {
+          const rect = (el as HTMLElement).getBoundingClientRect();
+          const x = (e as MouseEvent).clientX - rect.left;
+          const y = (e as MouseEvent).clientY - rect.top;
+          (el as HTMLElement).style.setProperty('--mouse-x', `${x}px`);
+          (el as HTMLElement).style.setProperty('--mouse-y', `${y}px`);
+        });
+      });
+    }
+
+    function initAll() {
+      initMonitor();
+      initSpotlight();
+    }
+
+    document.addEventListener('DOMContentLoaded', initAll);
+    document.addEventListener('astro:page-load', initAll);
+  </script>
+
+</Layout>
