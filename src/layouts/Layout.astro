@@ -4,12 +4,13 @@ import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/global.css'; // Ensure you have basic Tailwind setup
 import ConsentToast from '../components/ConsentToast.astro';
+import Analytics from '@vercel/analytics/astro'
 interface Props {
   title: string;
   description?: string;
 }
 
-const { title, description = "The Growth Ecosystem for SMBs." } = Astro.props;
+const { title, description = "Eversales | Sales Accelerator and Architechture for Startups and SMEs." } = Astro.props;
 ---
 
 <!doctype html>
