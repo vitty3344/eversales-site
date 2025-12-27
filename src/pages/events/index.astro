@@ -1,0 +1,315 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+const allEvents = await getCollection('events');
+const now = new Date();
+
+// Helper for sorting
+const getTime = (date: Date | string) => new Date(date).getTime();
+
+const upcomingEvents = allEvents
+  .filter(e => new Date(e.data.date) >= now)
+  .sort((a, b) => getTime(a.data.date) - getTime(b.data.date));
+
+const pastEvents = allEvents
+  .filter(e => new Date(e.data.date) < now)
+  .sort((a, b) => getTime(b.data.date) - getTime(a.data.date));
+
+const formatDate = (date: Date | string) => {
+  return new Date(date).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+};
+---
+
+<Layout title="Events Hub | Eversales">
+  <style>
+    @keyframes floatUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-entry {
+      animation: floatUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 0;
+    }
+    .spotlight-item {
+      position: relative;
+      overflow: hidden;
+      --mouse-x: 50%;
+      --mouse-y: 50%;
+    }
+    .spotlight-item::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(400px circle at var(--mouse-x) var(--mouse-y), rgba(37, 99, 235, 0.08), transparent 40%);
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .spotlight-item:hover::after { opacity: 1; }
+    
+    .hidden-event { display: none !important; }
+
+    /* UNIFIED BAR STYLING */
+    .unified-bar:focus-within {
+        border-color: #2563eb !important;
+        box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.1);
+    }
+    .unified-bar input:focus {
+        outline: none !important;
+        box-shadow: none !important;
+    }
+    
+    /* Clear Button Styling */
+    #clear-search {
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.2s ease;
+        transform: scale(0.9);
+    }
+    #clear-search.visible {
+        opacity: 1;
+        pointer-events: auto;
+        transform: scale(1);
+    }
+  </style>
+
+  <main class="bg-slate-50 pt-16">
+    <section class="py-20 md:py-28 relative overflow-hidden bg-white border-b border-slate-100">
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-blue-500/5 blur-[120px] rounded-full -z-10"></div>
+      <div class="max-w-7xl mx-auto px-6 text-center">
+        <h1 class="animate-entry text-5xl md:text-7xl font-extrabold text-slate-900 tracking-tight mb-8">
+            Eversales <span class="text-blue-600">Events.</span>
+        </h1>
+        
+        <div class="animate-entry [animation-delay:0.2s] max-w-2xl mx-auto mt-12">
+            <div class="unified-bar group flex items-center bg-white border border-slate-200 rounded-full transition-all duration-300 shadow-sm overflow-hidden focus-within:border-blue-600 focus-within:ring-4 focus-within:ring-blue-600/5 hover:border-slate-300 pr-4">
+                
+                <div id="search-icon-container" class="flex items-center px-6 text-slate-400 border-r border-slate-100 transition-all duration-300 group-hover:text-slate-500 self-stretch">
+                  <svg class="w-5 h-5 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                  </svg>
+                </div>
+                
+                <input 
+                    type="text" 
+                    id="event-search" 
+                    placeholder="Search events by title or location..." 
+                    class="flex-grow w-full min-w-0 pl-5 pr-4 py-4 text-sm bg-transparent border-none outline-none font-medium text-slate-900 placeholder-slate-400 focus:ring-0"
+                />
+
+                <button id="clear-search" class="text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-100" aria-label="Clear search">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+        </div>
+        </div>
+    </section>
+
+    <section class="py-24 px-6">
+      <div class="max-w-7xl mx-auto">
+        <h2 class="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-12 flex items-center gap-4">
+            Upcoming Events <div class="h-px flex-grow bg-slate-200"></div>
+        </h2>
+
+        <div id="upcoming-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {upcomingEvents.map((event) => (
+              <div 
+                class="event-card spotlight-item bg-white rounded-[2.5rem] border border-slate-100 p-8 shadow-sm flex flex-col transition-all duration-500 hover:shadow-xl group"
+                data-title={event.data.title.toLowerCase()}
+                data-location={event.data.location.toLowerCase()}
+              >
+                <div class="flex justify-between items-start mb-8">
+                  <div class="px-3 py-1 rounded-lg bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest">{event.data.type}</div>
+                  {event.data.isFeatured && <span class="flex h-2 w-2 rounded-full bg-blue-500 animate-pulse"></span>}
+                </div>
+
+                <h3 class="text-2xl font-bold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors">{event.data.title}</h3>
+                <p class="text-slate-400 text-sm mb-6 font-semibold">
+                   {formatDate(event.data.date)} • {event.data.location}
+                </p>
+
+                <div class="mt-auto pt-8 border-t border-slate-50 flex items-center justify-between">
+                  <div class="flex flex-col">
+                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">Registration</span>
+                    <span class="text-lg font-black text-slate-900">{event.data.price}</span>
+                  </div>
+                  <a href={event.data.link} class="relative z-20 px-6 py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-blue-600 transition-all text-sm">Join Event</a>
+                </div>
+              </div>
+            ))}
+        </div>
+
+        <div id="upcoming-no-results" class="hidden-event text-center py-12">
+            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-slate-100 text-slate-400 mb-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+            <p class="text-slate-400 font-medium text-lg">No upcoming events found.</p>
+            <p class="text-slate-400 text-sm mt-1">Try adjusting your search terms.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-24 px-6 bg-slate-100/50">
+        <div class="max-w-7xl mx-auto">
+          <h2 class="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-12 flex items-center gap-4">
+              Past Events <div class="h-px flex-grow bg-slate-200"></div>
+          </h2>
+  
+          <div id="past-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 opacity-60">
+              {pastEvents.map((event) => (
+                <div 
+                  class="event-card bg-white/50 rounded-[2.5rem] border border-slate-200 p-8 flex flex-col grayscale transition-all duration-500 hover:grayscale-0"
+                  data-title={event.data.title.toLowerCase()}
+                  data-location={event.data.location.toLowerCase()}
+                >
+                  <div class="flex justify-between items-start mb-8">
+                    <div class="px-3 py-1 rounded-lg bg-slate-200 text-slate-500 text-[10px] font-black uppercase tracking-widest">Finished</div>
+                  </div>
+  
+                  <h3 class="text-2xl font-bold text-slate-400 mb-2">{event.data.title}</h3>
+                  <p class="text-slate-400 text-sm mb-6">{formatDate(event.data.date)} • {event.data.location}</p>
+  
+                  <div class="mt-auto pt-8 border-t border-slate-100 flex items-center justify-between">
+                    <span class="text-xs font-bold text-slate-300 uppercase tracking-widest">Registration Closed</span>
+                    <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-300">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                    </div>
+                  </div>
+                </div>
+              ))}
+          </div>
+
+          <div id="past-no-results" class="hidden-event text-center py-12 opacity-60">
+             <p class="text-slate-400 font-medium">No past events match your search.</p>
+          </div>
+        </div>
+      </section>
+  </main>
+
+  <script>
+    function initEvents() {
+        const searchInput = document.getElementById('event-search');
+        const clearBtn = document.getElementById('clear-search');
+        const searchIconContainer = document.getElementById('search-icon-container');
+        
+        const upcomingGrid = document.getElementById('upcoming-grid');
+        const pastGrid = document.getElementById('past-grid');
+
+        // NEW: Get the No Results placeholders
+        const upcomingNoResults = document.getElementById('upcoming-no-results');
+        const pastNoResults = document.getElementById('past-no-results');
+
+        if (!searchInput || !upcomingGrid || !pastGrid) return;
+
+        // --- ICON VISUALS ---
+        const handleFocus = () => {
+            searchIconContainer.classList.add('text-blue-600');
+            searchIconContainer.querySelector('svg')?.classList.add('drop-shadow-[0_0_8px_rgba(37,99,235,0.4)]');
+        };
+        const handleBlur = () => {
+            searchIconContainer.classList.remove('text-blue-600');
+            searchIconContainer.querySelector('svg')?.classList.remove('drop-shadow-[0_0_8px_rgba(37,99,235,0.4)]');
+        };
+
+        // --- FILTER LOGIC ---
+        const filterEvents = () => {
+            // @ts-ignore
+            const query = searchInput.value.toLowerCase().trim();
+            
+            // Toggle Clear Button
+            if (query.length > 0) {
+                clearBtn.classList.add('visible');
+            } else {
+                clearBtn.classList.remove('visible');
+            }
+
+            let visibleUpcoming = 0;
+            let visiblePast = 0;
+
+            // Helper to check match
+            const checkCard = (card) => {
+                const title = card.getAttribute('data-title');
+                const loc = card.getAttribute('data-location');
+                let content = '';
+                // Fallback to visible text if data attributes missing
+                if (title && loc) {
+                    content = (title + ' ' + loc).toLowerCase();
+                } else {
+                    content = card.textContent.toLowerCase();
+                }
+
+                if (content.includes(query)) {
+                    card.classList.remove('hidden-event');
+                    return true;
+                } else {
+                    card.classList.add('hidden-event');
+                    return false;
+                }
+            };
+
+            // Count Upcoming Matches
+            upcomingGrid.querySelectorAll('.event-card').forEach(card => {
+                if (checkCard(card)) visibleUpcoming++;
+            });
+
+            // Count Past Matches
+            pastGrid.querySelectorAll('.event-card').forEach(card => {
+                if (checkCard(card)) visiblePast++;
+            });
+
+            // --- UI UPDATE: UPCOMING ---
+            // If we have a query but no results, Hide Grid & Show Message
+            if (visibleUpcoming === 0 && query !== '') {
+               upcomingGrid.classList.add('hidden-event');
+               // @ts-ignore
+               upcomingNoResults.classList.remove('hidden-event');
+            } else {
+               // Show Grid, Hide Message
+               upcomingGrid.classList.remove('hidden-event');
+               // @ts-ignore
+               upcomingNoResults.classList.add('hidden-event');
+            }
+
+            // --- UI UPDATE: PAST ---
+            if (visiblePast === 0 && query !== '') {
+               pastGrid.classList.add('hidden-event');
+               // @ts-ignore
+               pastNoResults.classList.remove('hidden-event');
+            } else {
+               pastGrid.classList.remove('hidden-event');
+               // @ts-ignore
+               pastNoResults.classList.add('hidden-event');
+            }
+        };
+
+        // --- CLEAR ACTION ---
+        clearBtn.addEventListener('click', () => {
+             // @ts-ignore
+            searchInput.value = '';
+            searchInput.focus();
+            filterEvents();
+        });
+
+        // --- BIND EVENTS ---
+        searchInput.removeEventListener('focus', handleFocus);
+        searchInput.removeEventListener('blur', handleBlur);
+        searchInput.removeEventListener('input', filterEvents);
+
+        searchInput.addEventListener('focus', handleFocus);
+        searchInput.addEventListener('blur', handleBlur);
+        searchInput.addEventListener('input', filterEvents);
+    }
+
+    // Init
+    initEvents();
+    document.addEventListener('astro:after-swap', initEvents);
+    document.addEventListener('astro:page-load', initEvents);
+  </script>
+</Layout>

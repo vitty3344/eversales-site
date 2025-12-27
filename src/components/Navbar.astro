@@ -1,0 +1,104 @@
+---
+// src/components/Navbar.astro
+const navItems = [
+  { 
+    name: "Services", 
+    href: "/services", 
+    children: [
+      { name: "Start-up Sales Accelerator", href: "/services#accelerator" },
+      { name: "Sales Architecture for SMBs", href: "/services#architecture" }
+    ]
+  },
+  { 
+    name: "Events", 
+    href: "/events", 
+    // DROPDOWN CHILDREN REMOVED
+  },
+  { name: "About", href: "/about" },
+];
+---
+
+<nav class="fixed top-0 w-full z-50 transition-all duration-300 border-b border-white/10 bg-white/80 backdrop-blur-md">
+  <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+    
+    <a href="/" class="flex items-center gap-2 group">
+      <img src="/logo-small.svg" alt="Eversales" class="h-8 w-auto md:hidden group-hover:scale-105 transition-transform" />
+      <img src="/logo-semi.svg" alt="Eversales" class="hidden md:block h-8 w-auto group-hover:scale-105 transition-transform" />
+    </a>
+
+    <div class="hidden md:flex items-center gap-8">
+      {navItems.map(item => (
+        item.children ? (
+          <div class="relative group h-full flex items-center">
+            <a href={item.href} class="flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors py-2 h-full">
+              <span>{item.name}</span>
+              <svg class="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 transition-colors translate-y-[1px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            
+            <div class="absolute left-1/2 -translate-x-1/2 top-full pt-2 w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top -translate-y-2 group-hover:translate-y-0">
+              <div class="bg-white/90 backdrop-blur-xl border border-slate-200 rounded-xl shadow-2xl p-2 flex flex-col gap-1 ring-1 ring-black/5">
+                {item.children.map(child => (
+                  <a href={child.href} class="block px-4 py-3 text-sm font-medium text-slate-700 hover:text-blue-700 hover:bg-slate-50 rounded-lg transition-all duration-200 text-left">
+                    {child.name}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <a href={item.href} class="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">
+            {item.name}
+          </a>
+        )
+      ))}
+
+      <a href="/book" class="ml-4 px-5 py-2.5 text-sm font-bold text-white bg-slate-900 rounded-full hover:bg-blue-600 transition-colors shadow-lg shadow-slate-900/10">
+        Book Your Free Audit
+      </a>
+    </div>
+
+    <button id="mobile-menu-btn" class="md:hidden p-2 text-slate-600">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+    </button>
+  </div>
+
+  <div id="mobile-menu" class="hidden md:hidden absolute top-20 left-0 w-full bg-white border-b border-slate-100 shadow-xl overflow-y-auto max-h-[80vh]">
+    <div class="p-6 flex flex-col gap-6">
+      {navItems.map(item => (
+        item.children ? (
+          <div class="flex flex-col gap-3">
+            <a href={item.href} class="text-base font-bold text-slate-900 hover:text-blue-600">{item.name}</a>
+            <div class="pl-4 flex flex-col gap-3 border-l-2 border-slate-100">
+              {item.children.map(child => (
+                <a href={child.href} class="text-sm font-medium text-slate-500 hover:text-blue-600">
+                  {child.name}
+                </a>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <a href={item.href} class="text-base font-bold text-slate-900 hover:text-blue-600">
+            {item.name}
+          </a>
+        )
+      ))}
+      
+      <div class="pt-4 border-t border-slate-100">
+        <a href="/book" class="block w-full text-center px-4 py-3 text-base font-bold text-white bg-blue-600 rounded-lg">
+          Book Your Free Audit
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<script>
+  const btn = document.getElementById('mobile-menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  
+  btn?.addEventListener('click', () => {
+    menu?.classList.toggle('hidden');
+  });
+</script>

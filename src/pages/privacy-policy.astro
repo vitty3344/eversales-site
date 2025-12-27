@@ -1,0 +1,56 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Privacy Policy | Eversales">
+  <main class="bg-slate-50 pt-24 pb-20">
+    <div class="max-w-4xl mx-auto px-6">
+      <div class="spotlight-item bg-white rounded-[2.5rem] border border-slate-200 p-8 md:p-16 shadow-sm transition-all duration-500">
+        <h1 class="text-4xl font-extrabold text-slate-900 mb-8 tracking-tight">Privacy Policy</h1>
+        
+        <div class="prose prose-slate prose-lg max-w-none text-slate-600 space-y-8">
+          <section>
+            <h2 class="text-xl font-bold text-slate-900 mb-4">1. Data Collection</h2>
+            <p>We collect information that you voluntarily provide to us when you express interest in our services, participate in activities on the site (such as booking a diagnostic call), or otherwise contact us. This may include personal identifiers and professional details necessary to facilitate our sales architecture programs.</p>
+          </section>
+
+          <section>
+            <h2 class="text-xl font-bold text-slate-900 mb-4">2. Automatic Information</h2>
+            <p>As you navigate our platform, we may automatically collect certain technical information (such as IP addresses, device types, and usage patterns). This information does not reveal your specific identity but is required to maintain the security and operation of our site, as well as for our internal analytics.</p>
+          </section>
+
+          <section>
+            <h2 class="text-xl font-bold text-slate-900 mb-4">3. Use of Information</h2>
+            <p>We use the information we collect to provide and improve our services, communicate with you, and ensure the efficiency of our sales engines. We do not sell your personal data to third parties.</p>
+          </section>
+
+          <section>
+            <h2 class="text-xl font-bold text-slate-900 mb-4">4. Future Enhancements</h2>
+            <p>As EverSales evolves, we may implement new technologies, including AI-driven tools, to enhance user experience. Your continued use of the site constitutes acceptance of how these tools interact with your provided data to optimize our services.</p>
+          </section>
+
+          <section class="pt-8 border-t border-slate-100">
+            <p class="text-sm">For questions regarding your data, contact: <strong>hello@eversales.net</strong></p>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function initSpotlight() {
+      const items = document.querySelectorAll('.spotlight-item');
+      items.forEach(el => {
+        el.addEventListener('mousemove', (e) => {
+          const rect = (el as HTMLElement).getBoundingClientRect();
+          const x = (e as MouseEvent).clientX - rect.left;
+          const y = (e as MouseEvent).clientY - rect.top;
+          (el as HTMLElement).style.setProperty('--mouse-x', `${x}px`);
+          (el as HTMLElement).style.setProperty('--mouse-y', `${y}px`);
+        });
+      });
+    }
+    document.addEventListener('DOMContentLoaded', initSpotlight);
+    document.addEventListener('astro:page-load', initSpotlight);
+  </script>
+</Layout>
