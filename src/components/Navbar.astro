@@ -3,23 +3,18 @@
 const navItems = [
   { 
     name: "Services", 
-    href: "/#services", 
+    href: "/services", 
     children: [
-      { name: "Start-up Sales Accelerator", href: "/services/accelerator" },
-      { name: "Corporate Training", href: "/services/training" }
+      { name: "Start-up Sales Accelerator", href: "/services#accelerator" },
+      { name: "Sales Architecture for SMBs", href: "/services#architecture" }
     ]
   },
   { 
     name: "Events", 
-    href: "/events",
-    children: [
-      { name: "Live Workshops", href: "/events/workshops" },
-      { name: "Training Bootcamps", href: "/events/bootcamps" },
-      { name: "Webinars", href: "/events/webinars" }
-    ]
+    href: "/events", 
+    // DROPDOWN CHILDREN REMOVED
   },
-  { name: "Partners", href: "/partners" }, /* NEW TAB ADDED HERE */
-  { name: "About", href: "/#about" },
+  { name: "About", href: "/about" },
 ];
 ---
 
@@ -34,16 +29,18 @@ const navItems = [
     <div class="hidden md:flex items-center gap-8">
       {navItems.map(item => (
         item.children ? (
-          <div class="relative group">
-            <button class="flex items-center gap-1 text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors py-2">
-              {item.name}
-              <svg class="w-4 h-4 text-slate-400 group-hover:text-blue-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-            </button>
+          <div class="relative group h-full flex items-center">
+            <a href={item.href} class="flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors py-2 h-full">
+              <span>{item.name}</span>
+              <svg class="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 transition-colors translate-y-[1px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
             
-            <div class="absolute left-1/2 -translate-x-1/2 top-full pt-4 w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top -translate-y-2 group-hover:translate-y-0">
-              <div class="bg-white/60 backdrop-blur-xl border border-white/40 rounded-xl shadow-2xl p-2 flex flex-col gap-1 ring-1 ring-white/50">
+            <div class="absolute left-1/2 -translate-x-1/2 top-full pt-2 w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top -translate-y-2 group-hover:translate-y-0">
+              <div class="bg-white/90 backdrop-blur-xl border border-slate-200 rounded-xl shadow-2xl p-2 flex flex-col gap-1 ring-1 ring-black/5">
                 {item.children.map(child => (
-                  <a href={child.href} class="block px-4 py-3 text-sm font-medium text-slate-700 hover:text-blue-700 hover:bg-white/50 rounded-lg transition-all duration-200 text-left">
+                  <a href={child.href} class="block px-4 py-3 text-sm font-medium text-slate-700 hover:text-blue-700 hover:bg-slate-50 rounded-lg transition-all duration-200 text-left">
                     {child.name}
                   </a>
                 ))}
@@ -72,7 +69,7 @@ const navItems = [
       {navItems.map(item => (
         item.children ? (
           <div class="flex flex-col gap-3">
-            <span class="text-base font-bold text-slate-900">{item.name}</span>
+            <a href={item.href} class="text-base font-bold text-slate-900 hover:text-blue-600">{item.name}</a>
             <div class="pl-4 flex flex-col gap-3 border-l-2 border-slate-100">
               {item.children.map(child => (
                 <a href={child.href} class="text-sm font-medium text-slate-500 hover:text-blue-600">
