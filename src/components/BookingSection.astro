@@ -3,20 +3,25 @@
 interface Props {
   title?: string;
   subtitle?: string;
-  calendarUrl?: string; 
+  calendarUrl?: string;
+  // New prop for dynamic bullets
+  features?: string[];
 }
 
 const { 
   title = "Book your Strategy Audit", 
   subtitle = "Find out exactly where your sales engine is leaking revenue.",
-  // 👇 CHANGE THIS LINE TO YOUR REAL LINK
-  calendarUrl = "https://calendly.com/hello-eversales/30min" 
+  calendarUrl = calendarUrl,
+  features = [
+    "We analyze your current sales process and closing rates.",
+    "We identify the #1 bottleneck stopping you from scaling.",
+    "You get a roadmap: Hiring, Scripting, or Training."
+  ]
 } = Astro.props;
 ---
 
 <section id="book" class="py-12 md:py-24 bg-slate-50">
   <div class="max-w-6xl mx-auto px-4 md:px-6">
-    
     <div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden flex flex-col lg:flex-row min-h-[700px]">
       
       <div class="w-full lg:w-5/12 bg-slate-900 p-8 md:p-12 text-white flex flex-col justify-between relative overflow-hidden">
@@ -25,7 +30,7 @@ const {
         <div class="relative z-10">
           <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-900/50 border border-blue-700/50 text-blue-400 text-xs font-bold uppercase tracking-wide mb-6">
             <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-            Limited Availability for Q1
+            Limited Availability
           </div>
 
           <h2 class="text-3xl md:text-4xl font-extrabold mb-6 leading-tight">{title}</h2>
@@ -37,38 +42,22 @@ const {
             <h4 class="text-sm font-bold uppercase tracking-widest text-slate-500">What happens on this call?</h4>
             
             <ul class="space-y-4">
-              <li class="flex items-start gap-3">
-                <div class="w-6 h-6 rounded-full bg-blue-600/20 flex items-center justify-center shrink-0 mt-0.5">
-                  <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                </div>
-                <span class="text-slate-300">We analyze your current sales process and closing rates.</span>
-              </li>
-              <li class="flex items-start gap-3">
-                <div class="w-6 h-6 rounded-full bg-blue-600/20 flex items-center justify-center shrink-0 mt-0.5">
-                  <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                </div>
-                <span class="text-slate-300">We identify the #1 bottleneck stopping you from scaling.</span>
-              </li>
-              <li class="flex items-start gap-3">
-                <div class="w-6 h-6 rounded-full bg-blue-600/20 flex items-center justify-center shrink-0 mt-0.5">
-                  <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                </div>
-                <span class="text-slate-300">You get a roadmap: Hiring, Scripting, or Training.</span>
-              </li>
+              {features.map((feature) => (
+                <li class="flex items-start gap-3">
+                  <div class="w-6 h-6 rounded-full bg-blue-600/20 flex items-center justify-center shrink-0 mt-0.5">
+                    <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                  </div>
+                  <span class="text-slate-300">{feature}</span>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
 
         <div class="relative z-10 pt-12 border-t border-slate-800 mt-12">
-          <div class="flex items-center gap-4">
-            <div class="flex -space-x-3">
-              <img class="w-10 h-10 rounded-full border-2 border-slate-900" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=64&h=64" alt="User" />
-              <img class="w-10 h-10 rounded-full border-2 border-slate-900" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=64&h=64" alt="User" />
-              <img class="w-10 h-10 rounded-full border-2 border-slate-900" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=64&h=64" alt="User" />
-            </div>
-            <p class="text-sm text-slate-500">Joined by <span class="text-white font-bold">120+ Founders</span> this year.</p>
           </div>
-        </div>
       </div>
 
       <div class="w-full lg:w-7/12 bg-white relative">
@@ -81,7 +70,7 @@ const {
 
         <div 
           class="calendly-inline-widget relative z-10" 
-          data-url=https://calendly.com/hello-eversales/30min 
+          data-url={calendarUrl}
           style="min-width:320px;height:700px;">
         </div>
       </div>
@@ -90,22 +79,11 @@ const {
   </div>
   
   <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
-<script is:inline>
-  window.addEventListener('message', function(e) {
-    // 1. Check if the message is from Calendly
-    if (e.data.event && e.data.event.startsWith('calendly')) {
-      
-      // 2. Log the EXACT event name to the console
-      console.log("Calendly Event Detected:", e.data.event);
-
-      // 3. Looser check: If the event name contains "scheduled", redirect.
-      // This catches 'calendly.event.scheduled' AND 'calendly.event.event_scheduled'
-      if (e.data.event.includes('scheduled')) {
-        console.log("✅ Success detected! Redirecting...");
+  <script is:inline>
+    window.addEventListener('message', function(e) {
+      if (e.data.event && e.data.event.includes('scheduled')) {
         window.location.href = '/thank-you';
       }
-    }
-  });
-</script>
-
-</section>  
+    });
+  </script>
+</section>
