@@ -8,7 +8,8 @@ import vercel from '@astrojs/vercel'; // <--- UPDATED: Removed '/serverless'
 export default defineConfig({
   // UPDATED: Changed back to 'static' (as per Astro 5.0 requirements)
   output: 'static', 
-
+  webAnalytics: { enabled: true },
+  speedInsights: { enabled: true },
   adapter: vercel(),
 
   integrations: [
