@@ -1,0 +1,51 @@
+EverSales
+
+    The Growth Ecosystem for SMBs. We install the sales infrastructure, talent, and systems needed to scale revenue predictably.
+
+Core Value Proposition
+
+EverSales transitions businesses from "Friction" (chaotic, manual selling) to "Flow" (predictable, automated systems). We don't just advise; we install the engine.
+
+Service Tracks
+
+    Start-up Sales Accelerator: Designed for Seed to Series A founders acting as the primary salesperson. Focuses on "Founder Magic Extraction" and hiring the first sales rep in 90 days.
+
+Corporate Training: For established teams missing quotas or suffering from inconsistent performance. Includes call audits, script re-architecture, and live roleplay coaching.
+
+The 4-Phase Installation Methodology
+
+    Diagnostic Audit: Analyzing CRM data and call recordings to identify friction points.
+
+Custom Blueprint: Building missing assets, including Sales Playbooks, word-for-word scripts, and email sequences.
+
+Active Installation: Live workshops and roleplay sessions to install new behaviors and recruiting support.
+
+System Handoff: Installing management KPIs and dashboards for automated operation.
+
+Educational Events
+
+    Live Workshops: 1-day intensive skill sessions.
+
+Training Bootcamps: Multi-day immersive programs.
+
+Webinars: Free 60-minute strategy sessions.
+
+Target Outcomes
+
+    Velocity: Average 3.5x increase in pipeline velocity.
+
+    Accuracy: 100% CRM data accuracy.
+
+    Scale: Transitioning from founder-led sales to managed team operations.
+
+Technical Metadata
+
+    Website: https://eversales.net
+
+    Framework: Astro 5.0 (Static Output) 
+
+CMS: Keystatic (Git-based JSON)
+
+Primary CTA: Strategy Audit / Diagnostic Call
+
+Deployment: Vercel
