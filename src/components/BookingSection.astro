@@ -60,8 +60,7 @@ const {
           </div>
       </div>
 
-      <div class="w-full lg:w-7/12 bg-white relative flex flex-col">
-        <div class="absolute inset-0 flex items-center justify-center bg-slate-50 z-0 h-[700px]">
+  <div id="calendar-loading" class="absolute inset-0 flex items-center justify-center bg-slate-50 z-0 h-[700px]">
           <div class="flex flex-col items-center gap-3">
              <div class="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
              <p class="text-sm text-slate-400 font-medium">Loading Calendar...</p>
@@ -69,6 +68,12 @@ const {
         </div>
 
         <div class="relative z-10 w-full" id="iframe-container">
+          <iframe 
+            src={calendarUrl}
+            onload="document.getElementById('calendar-loading').style.display='none';"
+            class="w-full bg-white"
+            style="border: 0; min-width: 320px; height: 700px;" 
+            frameborder="0">
           <iframe 
             src={calendarUrl}
             class="w-full"
