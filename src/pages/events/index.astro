@@ -1,4 +1,5 @@
 ---
+// src/pages/events/index.astro (or wherever this file lives)
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 
@@ -131,8 +132,9 @@ const formatDate = (date: Date | string) => {
                 </div>
 
                 <h3 class="text-2xl font-bold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors">{event.data.title}</h3>
+                
                 <p class="text-slate-400 text-sm mb-6 font-semibold">
-                   {formatDate(event.data.date)} • {event.data.location}
+                   {formatDate(event.data.date)}{event.data.time ? ` • ${event.data.time}` : ''} • {event.data.location}
                 </p>
 
                 <div class="mt-auto pt-8 border-t border-slate-50 flex items-center justify-between">
@@ -174,7 +176,10 @@ const formatDate = (date: Date | string) => {
                   </div>
   
                   <h3 class="text-2xl font-bold text-slate-400 mb-2">{event.data.title}</h3>
-                  <p class="text-slate-400 text-sm mb-6">{formatDate(event.data.date)} • {event.data.location}</p>
+                  
+                  <p class="text-slate-400 text-sm mb-6">
+                    {formatDate(event.data.date)}{event.data.time ? ` • ${event.data.time}` : ''} • {event.data.location}
+                  </p>
   
                   <div class="mt-auto pt-8 border-t border-slate-100 flex items-center justify-between">
                     <span class="text-xs font-bold text-slate-300 uppercase tracking-widest">Registration Closed</span>
@@ -202,13 +207,11 @@ const formatDate = (date: Date | string) => {
         const upcomingGrid = document.getElementById('upcoming-grid');
         const pastGrid = document.getElementById('past-grid');
 
-        // NEW: Get the No Results placeholders
         const upcomingNoResults = document.getElementById('upcoming-no-results');
         const pastNoResults = document.getElementById('past-no-results');
 
         if (!searchInput || !upcomingGrid || !pastGrid) return;
 
-        // --- ICON VISUALS ---
         const handleFocus = () => {
             searchIconContainer.classList.add('text-blue-600');
             searchIconContainer.querySelector('svg')?.classList.add('drop-shadow-[0_0_8px_rgba(37,99,235,0.4)]');
@@ -218,12 +221,10 @@ const formatDate = (date: Date | string) => {
             searchIconContainer.querySelector('svg')?.classList.remove('drop-shadow-[0_0_8px_rgba(37,99,235,0.4)]');
         };
 
-        // --- FILTER LOGIC ---
         const filterEvents = () => {
             // @ts-ignore
             const query = searchInput.value.toLowerCase().trim();
             
-            // Toggle Clear Button
             if (query.length > 0) {
                 clearBtn.classList.add('visible');
             } else {
@@ -233,12 +234,10 @@ const formatDate = (date: Date | string) => {
             let visibleUpcoming = 0;
             let visiblePast = 0;
 
-            // Helper to check match
             const checkCard = (card) => {
                 const title = card.getAttribute('data-title');
                 const loc = card.getAttribute('data-location');
                 let content = '';
-                // Fallback to visible text if data attributes missing
                 if (title && loc) {
                     content = (title + ' ' + loc).toLowerCase();
                 } else {
@@ -254,30 +253,24 @@ const formatDate = (date: Date | string) => {
                 }
             };
 
-            // Count Upcoming Matches
             upcomingGrid.querySelectorAll('.event-card').forEach(card => {
                 if (checkCard(card)) visibleUpcoming++;
             });
 
-            // Count Past Matches
             pastGrid.querySelectorAll('.event-card').forEach(card => {
                 if (checkCard(card)) visiblePast++;
             });
 
-            // --- UI UPDATE: UPCOMING ---
-            // If we have a query but no results, Hide Grid & Show Message
             if (visibleUpcoming === 0 && query !== '') {
                upcomingGrid.classList.add('hidden-event');
                // @ts-ignore
                upcomingNoResults.classList.remove('hidden-event');
             } else {
-               // Show Grid, Hide Message
                upcomingGrid.classList.remove('hidden-event');
                // @ts-ignore
                upcomingNoResults.classList.add('hidden-event');
             }
 
-            // --- UI UPDATE: PAST ---
             if (visiblePast === 0 && query !== '') {
                pastGrid.classList.add('hidden-event');
                // @ts-ignore
@@ -289,7 +282,6 @@ const formatDate = (date: Date | string) => {
             }
         };
 
-        // --- CLEAR ACTION ---
         clearBtn.addEventListener('click', () => {
              // @ts-ignore
             searchInput.value = '';
@@ -297,7 +289,6 @@ const formatDate = (date: Date | string) => {
             filterEvents();
         });
 
-        // --- BIND EVENTS ---
         searchInput.removeEventListener('focus', handleFocus);
         searchInput.removeEventListener('blur', handleBlur);
         searchInput.removeEventListener('input', filterEvents);
@@ -307,7 +298,6 @@ const formatDate = (date: Date | string) => {
         searchInput.addEventListener('input', filterEvents);
     }
 
-    // Init
     initEvents();
     document.addEventListener('astro:after-swap', initEvents);
     document.addEventListener('astro:page-load', initEvents);

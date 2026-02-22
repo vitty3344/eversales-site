@@ -1,5 +1,4 @@
 ---
-// src/pages/book.astro
 import Layout from '../layouts/Layout.astro';
 import BookingSection from '../components/BookingSection.astro';
 
@@ -11,14 +10,12 @@ const Features = [
 ---
 
 <Layout title="Book a Diagnostic Call | Eversales">
-  
   <main class="pt-20">
     <BookingSection 
       title="Book Your Free Systemwide Sales Diagnostic."
       subtitle="Select a time below for a 30-minute diagnostic call."
-      calendarUrl="https://calendly.com/hello-eversales/30min"
+      calendarUrl="https://calendar.google.com/calendar/appointments/AcZssZ2p2v-Z2ppqP4ojEUxfZGAZ3JhLfGlSK4oFJj8=?gv=true"
       features={Features}
     />
   </main>
-
 </Layout>

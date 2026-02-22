@@ -1,16 +1,26 @@
-import { defineCollection, z } from 'astro:content';
+// src/content/config.ts
+import { z, defineCollection } from 'astro:content';
 
 const events = defineCollection({
-  type: 'data',
+  type: 'data', // (or 'content' depending on your setup)
   schema: z.object({
     title: z.string(),
-    date: z.string(), // Keystatic saves dates as strings
+    date: z.string(), // (or z.date())
+    
+    // 1. ADD THIS LINE:
+    time: z.string().optional(), 
+    
     location: z.string(),
-    type: z.enum(['Workshop', 'Webinar', 'Accelerator', 'Bootcamp']),
+    
+    // 2. UPDATE THIS LINE TO INCLUDE 'Masterclass':
+    type: z.enum(['Workshop', 'Webinar', 'Accelerator', 'Bootcamp', 'Masterclass']),
+    
     price: z.string(),
-    link: z.string().url(),
+    link: z.string(),
     isFeatured: z.boolean().optional(),
   }),
 });
 
-export const collections = { events };
+export const collections = {
+  events, // (or whatever your export looks like)
+};

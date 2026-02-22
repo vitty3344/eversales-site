@@ -4,14 +4,14 @@ interface Props {
   title?: string;
   subtitle?: string;
   calendarUrl?: string;
-  // New prop for dynamic bullets
   features?: string[];
 }
 
 const { 
   title = "Book your Strategy Audit", 
   subtitle = "Find out exactly where your sales engine is leaking revenue.",
-  calendarUrl = calendarUrl,
+  // Defaulting to the Google Calendar link you provided earlier
+  calendarUrl = "https://calendar.google.com/calendar/appointments/AcZssZ2p2v-Z2ppqP4ojEUxfZGAZ3JhLfGlSK4oFJj8=?gv=true",
   features = [
     "We analyze your current sales process and closing rates.",
     "We identify the #1 bottleneck stopping you from scaling.",
@@ -60,29 +60,78 @@ const {
           </div>
       </div>
 
-      <div class="w-full lg:w-7/12 bg-white relative">
-        <div class="absolute inset-0 flex items-center justify-center bg-slate-50 z-0">
+      <div class="w-full lg:w-7/12 bg-white relative flex flex-col">
+        <div class="absolute inset-0 flex items-center justify-center bg-slate-50 z-0 h-[700px]">
           <div class="flex flex-col items-center gap-3">
              <div class="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
              <p class="text-sm text-slate-400 font-medium">Loading Calendar...</p>
           </div>
         </div>
 
-        <div 
-          class="calendly-inline-widget relative z-10" 
-          data-url={calendarUrl}
-          style="min-width:320px;height:700px;">
+        <div class="relative z-10 w-full" id="iframe-container">
+          <iframe 
+            src={calendarUrl}
+            class="w-full"
+            style="border: 0; min-width: 320px; height: 700px;" 
+            frameborder="0">
+          </iframe>
         </div>
-      </div>
 
+        <div id="post-booking-action" class="relative z-10 p-6 bg-slate-50 border-t border-slate-100 opacity-0 transition-opacity duration-1000 hidden flex-col items-center justify-center text-center">
+            <p class="text-slate-600 mb-3 font-medium">Finished securing your time?</p>
+            <a href="/thank-you" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition-colors w-full sm:w-auto">
+              Continue to Next Steps
+              <svg class="ml-2 -mr-1 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+              </svg>
+            </a>
+        </div>
+
+      </div>
     </div>
   </div>
   
-  <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
   <script is:inline>
-    window.addEventListener('message', function(e) {
-      if (e.data.event && e.data.event.includes('scheduled')) {
-        window.location.href = '/thank-you';
+    // Since we can't detect a successful booking due to CORS, 
+    // we detect when the user clicks inside the iframe area, 
+    // and then reveal the "Continue" button after a short delay.
+    
+    document.addEventListener("DOMContentLoaded", () => {
+      let interactionDetected = false;
+      
+      // We monitor when the window focus shifts to the iframe
+      window.addEventListener('blur', function() {
+        const activeElement = document.activeElement;
+        if (activeElement && activeElement.tagName === 'IFRAME') {
+          triggerPostBookingUI();
+        }
+      });
+
+      // Backup trigger: mouse entering the iframe area
+      const iframeContainer = document.getElementById('iframe-container');
+      if(iframeContainer) {
+        iframeContainer.addEventListener('mouseenter', () => {
+           triggerPostBookingUI();
+        }, { once: true });
+      }
+
+      function triggerPostBookingUI() {
+        if (interactionDetected) return;
+        interactionDetected = true;
+        
+        const actionDiv = document.getElementById('post-booking-action');
+        
+        // Wait 15 seconds after they start interacting with the calendar to show the button
+        // so it doesn't distract them while picking a date.
+        setTimeout(() => {
+          actionDiv.classList.remove('hidden');
+          actionDiv.classList.add('flex');
+          // Slight delay to allow display:flex to apply before animating opacity
+          setTimeout(() => {
+            actionDiv.classList.remove('opacity-0');
+            actionDiv.classList.add('opacity-100');
+          }, 50);
+        }, 15000); 
       }
     });
   </script>
